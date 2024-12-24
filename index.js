@@ -35,23 +35,25 @@ const heartRateSchema = new mongoose.Schema({
 const HeartRate = mongoose.model("HeartRate", heartRateSchema);
 
 // Routes
-app.post("/api/heart_rate", async (req, res) => {
+app.post('/api/heart_rate', async (req, res) => {
   try {
     const { bpm, spo2 } = req.body;
 
     const newHeartRate = new HeartRate({ bpm, spo2 });
     await newHeartRate.save();
-
-    res.status(201).json({ message: "Heart rate data saved" });
+    console.log('Heart rate data saved');
+    
+    res.status(200).json({ message: "Heart rate data saved" });
   } catch (error) {
+    console.error('Error saving heart data:', error);
     res.status(500).json({ error: "Failed to save heart rate data" });
   }
 });
 
-app.get("/api/heart_rate", async (req, res) => {
+app.get('/api/heart_rate', async (req, res) => {
   try {
     const latestData = await HeartRate.find().sort({ timestamp: -1 }).limit(1);
-    res.json(latestData[0]);
+    res.status(200).json(latestData[0]);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch heart rate data" });
   }
